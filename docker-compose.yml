@@ -1,0 +1,180 @@
+---
+version: '2'
+services:
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:${CONFLUENT_PlATFORM_VERSION}
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  # This is where C3 runs    
+  kafka_env1:
+    image: confluentinc/cp-server:${CONFLUENT_PlATFORM_VERSION}
+    container_name: kafka_env1
+    depends_on:
+      - zookeeper
+    ports:
+    # Exposes 9092 for external connections to the broker
+    # Use kafka:29092 for connections internal on the docker network
+    # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka/env1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_env1:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_BALANCER_ENABLE: 'false'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'demo'
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka_env1:29092
+
+      # Set all replication factors to 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_SECURITY_EVENT_LOGGER_EXPORTER_KAFKA_TOPIC_REPLICAS: 1
+ 
+  kafka_env2:
+    image: confluentinc/cp-server:${CONFLUENT_PlATFORM_VERSION}
+    container_name: kafka_env2
+    depends_on:
+      - zookeeper
+    ports:
+    # Exposes 9092 for external connections to the broker
+    # Use kafka:29092 for connections internal on the docker network
+    # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - 9093:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka/env2
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_env2:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+
+      # We point the metrics to ENV1 as that's where C3 connects
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka_env1:29092
+
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_BALANCER_ENABLE: 'false'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'demo'
+
+      # Set all replication factors to 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_SECURITY_EVENT_LOGGER_EXPORTER_KAFKA_TOPIC_REPLICAS: 1
+
+  kafka_env3:
+    image: confluentinc/cp-server:${CONFLUENT_PlATFORM_VERSION}
+    container_name: kafka_env3
+    depends_on:
+      - zookeeper
+    ports:
+    # Exposes 9092 for external connections to the broker
+    # Use kafka:29092 for connections internal on the docker network
+    # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - 9094:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/kafka/env3
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka_env3:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
+
+      # We point the metrics to ENV1 as that's where C3 connects
+      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: kafka_env1:29092
+
+      CONFLUENT_METRICS_ENABLE: 'true'
+      CONFLUENT_BALANCER_ENABLE: 'false'
+      CONFLUENT_SUPPORT_CUSTOMER_ID: 'demo'
+
+      # Set all replication factors to 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+      CONFLUENT_SECURITY_EVENT_LOGGER_EXPORTER_KAFKA_TOPIC_REPLICAS: 1
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:${CONFLUENT_PlATFORM_VERSION}
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - zookeeper
+      - kafka_env1
+      - kafka_env2
+      - kafka_env3
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: kafka_env1:29092
+
+      # Register a list of Kafka clusters
+      # Give the cluster a name, say YYYY and point to its Bootstrap URL
+      # CONTROL_CENTER_KAFKA_YYYY_BOOTSTRAP_SERVERS: kafka:29092
+      # And don't forget to give all the SASL config needed for the connection
+
+      CONTROL_CENTER_KAFKA_ENV1_BOOTSTRAP_SERVERS: kafka_env1:29092
+
+      CONTROL_CENTER_KAFKA_ENV2_BOOTSTRAP_SERVERS: kafka_env2:29092
+
+      CONTROL_CENTER_KAFKA_ENV3_BOOTSTRAP_SERVERS: kafka_env3:29092
+
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_REPLICATION: 1
+      CONTROL_CENTER_COMMAND_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_METRICS_TOPIC_REPLICATION: 1
+      CONTROL_CENTER_STREAMS_NUM_STREAM_THREADS: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+
+      # Workaround for MMA-3564
+      CONTROL_CENTER_METRICS_TOPIC_MAX_MESSAGE_BYTES: 8388608
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+
+      #CONTROL_CENTER_CONFLUENT_TOPIC: "confluent-command"
+      #CONTROL_CENTER_CONFLUENT_LICENSE: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNaWMgSHVzc2V5IiwiZXhwIjoxNjIzMjgzMjAwLCJpYXQiOjE1OTE3NDcyMDAsImlzcyI6IkNvbmZsdWVudCIsIm1vbml0b3JpbmciOnRydWUsIm5iNCI6MTU5MTc3OTQzNywic3ViIjoiY29udHJvbC1jZW50ZXIifQ.VG4I5q1aPuYnznQKWuc_KU74b4F6mGo_qHUttKEYm5Mv6_ujx6XKN3BVEHa-eVfLGUphS6verY93-cD2f7U5xAL0V63B3XDFGPxUSzYiW2c198oN3BKFAWt23V4N9KEp7pjFKALE_YD9Lu2Ev8nDMmoWzKouYHZ4brkP4a7Sx1mOxx4ZeD7hJgyZ-K6Uf70b9ZdD1coFUQ3kNFm1pD48mllopc_8RyEn0nYRZk1X9scJI4g1znVlguM5gKriGPJhC5KC85y58hvWZrul0z5k0XfLc7ZvQxXkQYPmlXWDIEtmlZ-8iv9dLyw52EG9KiCREgArxh2Tasx0jSL9njflxg"
+      PORT: 9021
+    volumes:
+      - monitoring_interceptors:/usr/share/java/monitoring-interceptors/
+
+volumes:
+    mi2: {}
+    # This volume is mounted on an image in which the interceptor JARs do exist
+    # so that it can also be mounted on others where they do not, in order
+    # that those others can also make use of the interceptors. Neat huh! 
+    # Props to ybyzek for this trick
+    monitoring_interceptors: {}
