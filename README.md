@@ -26,7 +26,7 @@ There's 2 things that need to happen for a cluster to show up in C3.
 `CONTROL_CENTER_KAFKA_<name>_BOOTSTRAP_SERVERS: host:port`
 or
 `control.center.kafka.<name>.bootstrap_servers=host:port`
-The <name> is completely arbitrary, but is what shows up in the UI
+The `<name>` is completely arbitrary, but is what shows up in the UI
 
 2. the environment's brokers must be configured so that their metrics reporters write to the cluster that C3 is connected to.
 i.e. whatever cluster is used in `CONTROL_CENTER_BOOTSTRAP_SERVERS` should be used as the destination for `CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS` in the remote envs.
